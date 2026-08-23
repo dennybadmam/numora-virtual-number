@@ -5,11 +5,10 @@ import { useAuth } from '../lib/auth'
 import { siteConfig } from '../../site.config'
 
 export function Wallet() {
-  const { balance } = useAuth()
+  const { balanceUsd, format } = useAuth()
   const [tab, setTab] = useState<'bank' | 'crypto'>('bank')
   const [copied, setCopied] = useState(false)
   const va = siteConfig.demo.virtualAccount
-  const sym = siteConfig.currency.symbol
 
   const copy = async () => {
     await navigator.clipboard.writeText(va.accountNumber)
@@ -33,10 +32,7 @@ export function Wallet() {
         <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">
           Current balance
         </p>
-        <p className="mt-1 text-3xl font-semibold text-brand">
-          {sym}
-          {balance.toLocaleString()}
-        </p>
+        <p className="mt-1 text-3xl font-semibold text-brand">{format(balanceUsd)}</p>
         <p className="text-xs text-slate-400">Available</p>
       </div>
 

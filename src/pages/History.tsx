@@ -1,11 +1,9 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { useAuth } from '../lib/auth'
-import { siteConfig } from '../../site.config'
 
 export function History() {
-  const { transactions } = useAuth()
-  const sym = siteConfig.currency.symbol
+  const { transactions, format } = useAuth()
 
   return (
     <div className="px-4 pt-3">
@@ -43,9 +41,8 @@ export function History() {
                 t.amount >= 0 ? 'text-emerald-600' : 'text-slate-900'
               }`}
             >
-              {t.amount >= 0 ? '+' : '−'}
-              {sym}
-              {Math.abs(t.amount).toLocaleString()}
+              {t.amount >= 0 ? '+' : ''}
+              {format(t.amount)}
             </p>
           </div>
         ))}
