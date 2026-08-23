@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, ChevronRight, Search } from 'lucide-react'
+import { ArrowLeft, ChevronRight } from 'lucide-react'
 import {
   countries,
   otpServices,
@@ -9,10 +9,9 @@ import {
   type RentedNumber,
 } from '../data/mock'
 import { useAuth } from '../lib/auth'
-import { siteConfig } from '../../site.config'
 
 export function Numbers() {
-  const { balance, debit, addNumber, numbers } = useAuth()
+  const { balanceUsd, debit, addNumber, numbers, format } = useAuth()
   const [scope, setScope] = useState<'usa' | 'global'>('usa')
   const [server, setServer] = useState('s1')
   const [serviceId, setServiceId] = useState('')
@@ -24,7 +23,6 @@ export function Numbers() {
   const servers = scope === 'usa' ? usaServers : globalServers
   const service = otpServices.find((s) => s.id === serviceId)
   const price = service?.price ?? 0
-  const sym = siteConfig.currency.symbol
 
   const rent = () => {
     if (!service) {
@@ -32,7 +30,7 @@ export function Numbers() {
       setTimeout(() => setToast(''), 2000)
       return
     }
-    if (balance < price) {
+    if (balanceUsd < price) {
       setToast('Insufficient balance — fund your wallet')
       setTimeout(() => setToast(''), 2500)
       return
@@ -72,13 +70,11 @@ export function Numbers() {
         <h1 className="text-lg font-semibold text-slate-900">Virtual Numbers</h1>
       </div>
 
+      {/* Balance strip */}
       <div className="mb-4 flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3.5 py-3">
         <div>
           <p className="text-[10px] uppercase tracking-wide text-slate-400">Balance</p>
-          <p className="text-sm font-semibold text-slate-900">
-            {sym}
-            {balance.toLocaleString()}
-          </p>
+          <p className="text-sm font-semibold text-slate-900">{format(balanceUsd)}</p>
         </div>
         <Link
           to="/app/wallet"
@@ -88,6 +84,7 @@ export function Numbers() {
         </Link>
       </div>
 
+      {/* Scope tabs */}
       <div className="mb-3 flex rounded-xl border border-slate-200 bg-white p-1">
         <button
           type="button"
@@ -115,6 +112,7 @@ export function Numbers() {
         </button>
       </div>
 
+      {/* Server chips */}
       <div className="mb-4 flex gap-2 overflow-x-auto no-scrollbar">
         {servers.map((s) => (
           <button
@@ -132,6 +130,7 @@ export function Numbers() {
         ))}
       </div>
 
+      {/* Rent card */}
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="mb-1 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-slate-900">
@@ -167,50 +166,45 @@ export function Numbers() {
           onClick={() => setShowServices(true)}
           className="mb-3 flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-left"
         >
-          <div className="flex items-center gap-2">
-            <Search className="h-4 w-4 text-slate-400" />
-            <span className="text-sm text-slate-600">
-              {service ? service.name : 'Tap to choose service…'}
-            </span>
+          <div>
+            <p className="text-[10px] uppercase tracking-wide text-slate-400">Service</p>
+            <p className="text-sm font-medium text-slate-900">
+              {service ? service.name : 'Select service'}
+            </p>
           </div>
           <ChevronRight className="h-4 w-4 text-slate-400" />
         </button>
 
-        {service && (
-          <div className="mb-3 flex items-center justify-between rounded-xl bg-brand/5 px-3.5 py-2.5">
-            <span className="text-xs text-slate-600">Price</span>
-            <span className="text-sm font-semibold text-brand">
-              {sym}
-              {price.toLocaleString()}
-            </span>
-          </div>
-        )}
+        <div className="mb-4 flex items-center justify-between rounded-xl bg-slate-50 px-3.5 py-3">
+          <span className="text-xs text-slate-500">Price</span>
+          <span className="text-sm font-semibold text-brand">
+            {service ? format(price) : '—'}
+          </span>
+        </div>
 
         <button
           type="button"
+          disabled={busy || !service}
           onClick={rent}
-          disabled={busy}
-          className="pressable w-full rounded-xl bg-brand py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60"
+          className="pressable w-full rounded-xl bg-brand py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-50"
         >
-          {busy ? 'Renting…' : 'Rent Number'}
+          {busy ? 'Renting…' : 'Rent number'}
         </button>
       </div>
 
+      {/* My orders */}
       <div className="mt-6">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-slate-900">My orders</h2>
-          <span className="text-xs text-slate-400">{numbers.length} orders</span>
-        </div>
+        <h2 className="mb-3 text-sm font-semibold text-slate-900">My orders</h2>
         {numbers.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 bg-white py-10 text-center">
-            <p className="text-sm text-slate-500">No orders yet. Buy your first number above!</p>
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-white py-10 text-center text-xs text-slate-400">
+            No numbers yet
           </div>
         ) : (
           <div className="space-y-2">
             {numbers.map((n) => (
               <div
                 key={n.id}
-                className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm"
+                className="rounded-xl border border-slate-200 bg-white px-3.5 py-3"
               >
                 <div className="flex items-start justify-between">
                   <div>
@@ -247,6 +241,7 @@ export function Numbers() {
         )}
       </div>
 
+      {/* Service picker sheet */}
       {showServices && (
         <div
           className="fixed inset-0 z-50 flex items-end bg-black/40"
@@ -278,10 +273,7 @@ export function Numbers() {
                   className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left hover:bg-slate-50"
                 >
                   <span className="text-sm font-medium text-slate-800">{s.name}</span>
-                  <span className="text-xs font-semibold text-brand">
-                    {sym}
-                    {s.price.toLocaleString()}
-                  </span>
+                  <span className="text-xs font-semibold text-brand">{format(s.price)}</span>
                 </button>
               ))}
             </div>
