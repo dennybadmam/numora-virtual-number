@@ -1,6 +1,7 @@
 export type ServiceOption = {
   id: string
   name: string
+  /** Price in USD (base). Display converts via selected currency. */
   price: number
   icon?: string
 }
@@ -21,6 +22,7 @@ export type RentedNumber = {
   status: 'waiting' | 'received' | 'expired'
   sms?: string
   expiresIn?: string
+  /** Price paid in USD base */
   price: number
   createdAt: string
 }
@@ -29,6 +31,7 @@ export type Transaction = {
   id: string
   type: 'deposit' | 'purchase' | 'refund'
   label: string
+  /** Amount in USD base (positive = credit, negative = debit) */
   amount: number
   date: string
   status: 'success' | 'pending' | 'failed'
@@ -47,17 +50,18 @@ export const countries: Country[] = [
   { code: 'PH', name: 'Philippines', flag: '🇵🇭', dial: '+63' },
 ]
 
+/** Service prices in USD */
 export const otpServices: ServiceOption[] = [
-  { id: 'whatsapp', name: 'WhatsApp', price: 450 },
-  { id: 'telegram', name: 'Telegram', price: 380 },
-  { id: 'google', name: 'Google', price: 320 },
-  { id: 'facebook', name: 'Facebook', price: 400 },
-  { id: 'instagram', name: 'Instagram', price: 420 },
-  { id: 'twitter', name: 'X / Twitter', price: 350 },
-  { id: 'tiktok', name: 'TikTok', price: 390 },
-  { id: 'amazon', name: 'Amazon', price: 500 },
-  { id: 'paypal', name: 'PayPal', price: 550 },
-  { id: 'other', name: 'Other / Any', price: 300 },
+  { id: 'whatsapp', name: 'WhatsApp', price: 1.2 },
+  { id: 'telegram', name: 'Telegram', price: 0.95 },
+  { id: 'google', name: 'Google', price: 0.85 },
+  { id: 'facebook', name: 'Facebook', price: 1.05 },
+  { id: 'instagram', name: 'Instagram', price: 1.1 },
+  { id: 'twitter', name: 'X / Twitter', price: 0.9 },
+  { id: 'tiktok', name: 'TikTok', price: 1.0 },
+  { id: 'amazon', name: 'Amazon', price: 1.35 },
+  { id: 'paypal', name: 'PayPal', price: 1.5 },
+  { id: 'other', name: 'Other / Any', price: 0.75 },
 ]
 
 export const usaServers = [
@@ -79,7 +83,7 @@ export const initialNumbers: RentedNumber[] = [
     service: 'WhatsApp',
     status: 'received',
     sms: 'Your WhatsApp code is 847291',
-    price: 450,
+    price: 1.2,
     createdAt: '2026-08-22T14:20:00Z',
   },
   {
@@ -90,7 +94,7 @@ export const initialNumbers: RentedNumber[] = [
     service: 'Telegram',
     status: 'waiting',
     expiresIn: '12:48',
-    price: 380,
+    price: 0.95,
     createdAt: '2026-08-23T10:05:00Z',
   },
 ]
@@ -100,7 +104,7 @@ export const initialTx: Transaction[] = [
     id: 't1',
     type: 'deposit',
     label: 'Wallet top-up · Bank transfer',
-    amount: 15000,
+    amount: 30,
     date: '2026-08-21T09:12:00Z',
     status: 'success',
   },
@@ -108,7 +112,7 @@ export const initialTx: Transaction[] = [
     id: 't2',
     type: 'purchase',
     label: 'WhatsApp · +1 415 829 1043',
-    amount: -450,
+    amount: -1.2,
     date: '2026-08-22T14:20:00Z',
     status: 'success',
   },
@@ -116,7 +120,7 @@ export const initialTx: Transaction[] = [
     id: 't3',
     type: 'purchase',
     label: 'Telegram · +44 7700 900218',
-    amount: -380,
+    amount: -0.95,
     date: '2026-08-23T10:05:00Z',
     status: 'success',
   },
