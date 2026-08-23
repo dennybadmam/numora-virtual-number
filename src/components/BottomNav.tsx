@@ -19,7 +19,7 @@ export function BottomNav() {
             to={to}
             end={end}
             className={({ isActive }) =>
-              `flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
+              `relative flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
                 isActive ? 'text-brand' : 'text-slate-400'
               }`
             }
@@ -27,10 +27,13 @@ export function BottomNav() {
             {({ isActive }) => (
               <>
                 <Icon
-                  className={`h-5 w-5 ${isActive ? 'stroke-[2.25]' : 'stroke-[1.75]'}`}
+                  className="h-5 w-5"
                   strokeWidth={isActive ? 2.25 : 1.75}
                 />
                 <span>{label}</span>
+                {isActive && (
+                  <span className="absolute bottom-0 h-0.5 w-6 rounded-full bg-brand" />
+                )}
               </>
             )}
           </NavLink>
