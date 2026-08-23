@@ -6,7 +6,6 @@ import {
   Inbox,
   CreditCard,
   Headphones,
-  Moon,
   Copy,
   Check,
 } from 'lucide-react'
@@ -28,10 +27,9 @@ const quick = [
 ]
 
 export function Home() {
-  const { username, balance, transactions } = useAuth()
+  const { username, balanceUsd, transactions, format, currency } = useAuth()
   const [copied, setCopied] = useState(false)
   const va = siteConfig.demo.virtualAccount
-  const sym = siteConfig.currency.symbol
 
   const copy = async () => {
     await navigator.clipboard.writeText(va.accountNumber)
@@ -44,21 +42,26 @@ export function Home() {
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand text-sm font-semibold text-white">
-            {username.slice(0, 1).toUpperCase()}
+          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-brand text-sm font-semibold text-white">
+            <img
+              src={siteConfig.assets.logo}
+              alt=""
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                ;(e.target as HTMLImageElement).style.display = 'none'
+                ;(e.target as HTMLImageElement).parentElement!.textContent =
+                  username.slice(0, 1).toUpperCase()
+              }}
+            />
           </div>
           <div>
             <p className="text-xs text-slate-500">Welcome back</p>
             <p className="text-sm font-semibold text-slate-900">{username}</p>
           </div>
         </div>
-        <button
-          type="button"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500"
-          aria-label="Theme"
-        >
-          <Moon className="h-4 w-4" />
-        </button>
+        <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-600">
+          {currency.code}
+        </span>
       </div>
 
       {/* Balance card */}
@@ -67,10 +70,9 @@ export function Home() {
           Total balance
         </p>
         <p className="mt-1 text-3xl font-semibold tracking-tight">
-          {sym}
-          {balance.toLocaleString()}
+          {format(balanceUsd)}
         </p>
-        <p className="mt-0.5 text-xs text-blue-100">Available</p>
+        <p className="mt-0.5 text-xs text-blue-100">Available · {currency.name}</p>
         <Link
           to="/app/wallet"
           className="pressable absolute right-4 top-4 rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium backdrop-blur hover:bg-white/25"
@@ -159,8 +161,7 @@ export function Home() {
                 }`}
               >
                 {t.amount >= 0 ? '+' : ''}
-                {sym}
-                {Math.abs(t.amount).toLocaleString()}
+                {format(t.amount)}
               </p>
             </div>
           ))}
