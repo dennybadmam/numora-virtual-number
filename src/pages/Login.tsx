@@ -28,8 +28,18 @@ export function Login() {
     <div className="flex min-h-dvh flex-col justify-center bg-slate-50 px-5">
       <div className="mx-auto w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-lg font-bold text-white shadow-sm">
-            N
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-brand shadow-sm">
+            <img
+              src={siteConfig.assets.logo}
+              alt={siteConfig.name}
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                const el = e.target as HTMLImageElement
+                el.style.display = 'none'
+                el.parentElement!.innerHTML =
+                  '<span class="text-xl font-bold text-white">N</span>'
+              }}
+            />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
             {siteConfig.name}
